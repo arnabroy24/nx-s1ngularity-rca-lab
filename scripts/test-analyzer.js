@@ -26,6 +26,8 @@ for (const requiredPattern of [
   '${{ github.event.pull_request.title }}',
   '${{ github.event.pull_request.body }}',
   '${{ secrets.RCA_CANARY }}',
+  'github.event.pull_request.head.repo.fork == true',
+  'github.event.pull_request.head.repo.owner.login == vars.RCA_LAB_ACTOR',
   'github.event.pull_request.user.login == vars.RCA_LAB_ACTOR',
   "contains(github.event.pull_request.labels.*.name, 'rca-lab-approved')",
   'contents: read',

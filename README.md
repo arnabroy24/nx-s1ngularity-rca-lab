@@ -24,11 +24,11 @@ The active lab workflow deliberately executes PR title/body shell syntax after t
 
 Before opening the demonstration PR, configure:
 
-1. Repository variable `RCA_LAB_ACTOR` with the login of the mock GitHub account.
+1. Repository variable `RCA_LAB_ACTOR` with your friend's exact GitHub login.
 2. Repository secret `RCA_CANARY` with a disposable value that has no privileges anywhere.
 3. Repository label `rca-lab-approved`.
 
-Create the PR from a branch in the same repository under `RCA_LAB_ACTOR`. Add the `rca-lab-approved` label only when ready to execute the demonstration. The workflow will not run for fork PRs, other actors, or unlabeled PRs.
+Have that user fork the repository and open the PR from a branch in their fork. Add the `rca-lab-approved` label only when ready to execute the demonstration. The workflow will not run for non-fork PRs, forks owned by another account, PRs authored by another account, or unlabeled PRs.
 
 To prove title command execution and canary availability without disclosing the secret, use this PR title:
 
@@ -80,7 +80,7 @@ npm test
 
 ## Safety boundary
 
-The active workflow is intentionally vulnerable, but execution requires a same-repository PR by the configured actor and a maintainer-applied label. It has only `contents: read`, checks out the trusted base SHA with `persist-credentials: false`, and has a two-minute timeout. Do not remove those gates while the repository is public. Use only a valueless canary, remove the secret after testing, and disable the workflow or make the repository private when the demonstration is complete.
+The active workflow is intentionally vulnerable, but execution requires a fork owned by the configured actor, a PR authored by that same actor, and a maintainer-applied label. It has only `contents: read`, checks out the trusted base SHA with `persist-credentials: false`, and has a two-minute timeout. Do not remove those gates while the repository is public. Use only a valueless canary, remove the secret after testing, and disable the workflow or make the repository private when the demonstration is complete.
 
 ## Attribution
 

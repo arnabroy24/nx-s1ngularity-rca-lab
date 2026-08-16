@@ -19,11 +19,12 @@ concurrency:
 jobs:
   vulnerable-validation:
     # Containment gates:
-    # 1. only a PR from a branch in this repository;
-    # 2. only the login configured in the RCA_LAB_ACTOR repository variable;
-    # 3. only after a maintainer adds the rca-lab-approved label.
+    # 1. only a fork owned by the login configured in RCA_LAB_ACTOR;
+    # 2. the PR author must be that same allowlisted login;
+    # 3. a maintainer must add the rca-lab-approved label.
     if: >-
-      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.repo.fork == true &&
+      github.event.pull_request.head.repo.owner.login == vars.RCA_LAB_ACTOR &&
       github.event.pull_request.user.login == vars.RCA_LAB_ACTOR &&
       contains(github.event.pull_request.labels.*.name, 'rca-lab-approved')
     runs-on: ubuntu-latest
