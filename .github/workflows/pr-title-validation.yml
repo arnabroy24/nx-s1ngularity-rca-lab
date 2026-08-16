@@ -5,7 +5,7 @@ name: RCA lab - vulnerable PR metadata validation
 # interpolation of attacker-controlled PR metadata into generated Bash source.
 on:
   pull_request_target:
-    types: [opened, edited, synchronize, reopened, labeled]
+    types: [opened, edited, synchronize, reopened]
 
 # The real incident inherited write access. This lab grants only the read access
 # needed to check out the base revision; checkout does not persist credentials.
@@ -20,13 +20,11 @@ jobs:
   vulnerable-validation:
     # Containment gates:
     # 1. only a fork owned by the login configured in RCA_LAB_ACTOR;
-    # 2. the PR author must be that same allowlisted login;
-    # 3. a maintainer must add the rca-lab-approved label.
+    # 2. the PR author must be that same allowlisted login.
     if: >-
       github.event.pull_request.head.repo.fork == true &&
       github.event.pull_request.head.repo.owner.login == vars.RCA_LAB_ACTOR &&
-      github.event.pull_request.user.login == vars.RCA_LAB_ACTOR &&
-      contains(github.event.pull_request.labels.*.name, 'rca-lab-approved')
+      github.event.pull_request.user.login == vars.RCA_LAB_ACTOR
     runs-on: ubuntu-latest
     timeout-minutes: 2
     env:

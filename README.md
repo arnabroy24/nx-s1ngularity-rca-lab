@@ -26,9 +26,8 @@ Before opening the demonstration PR, configure:
 
 1. Repository variable `RCA_LAB_ACTOR` with your friend's exact GitHub login.
 2. Repository secret `RCA_CANARY` with a disposable value that has no privileges anywhere.
-3. Repository label `rca-lab-approved`.
 
-Have that user fork the repository and open the PR from a branch in their fork. Add the `rca-lab-approved` label only when ready to execute the demonstration. The workflow will not run for non-fork PRs, forks owned by another account, PRs authored by another account, or unlabeled PRs.
+Have that user fork the repository and open the PR from a branch in their fork. The workflow runs automatically when that PR is opened, edited, synchronized, or reopened. It will not run for non-fork PRs, forks owned by another account, or PRs authored by another account.
 
 To prove title command execution and canary availability without disclosing the secret, use this PR title:
 
@@ -80,7 +79,7 @@ npm test
 
 ## Safety boundary
 
-The active workflow is intentionally vulnerable, but execution requires a fork owned by the configured actor, a PR authored by that same actor, and a maintainer-applied label. It has only `contents: read`, checks out the trusted base SHA with `persist-credentials: false`, and has a two-minute timeout. Do not remove those gates while the repository is public. Use only a valueless canary, remove the secret after testing, and disable the workflow or make the repository private when the demonstration is complete.
+The active workflow is intentionally vulnerable, but execution requires a fork owned by the configured actor and a PR authored by that same actor. It has only `contents: read`, checks out the trusted base SHA with `persist-credentials: false`, and has a two-minute timeout. Do not remove those actor gates while the repository is public. Use only a valueless canary, remove the secret after testing, and disable the workflow or make the repository private when the demonstration is complete.
 
 ## Attribution
 

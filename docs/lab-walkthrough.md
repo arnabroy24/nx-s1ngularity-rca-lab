@@ -1,6 +1,6 @@
 # Lab walkthrough
 
-This is a 10-minute demonstration for a security talk or tabletop exercise. The active GitHub workflow is intentionally vulnerable but gated to a fork owned by the configured demo actor, a PR authored by that same actor, and a maintainer-applied label.
+This is a 10-minute demonstration for a security talk or tabletop exercise. The active GitHub workflow is intentionally vulnerable but gated to a fork owned by the configured demo actor and a PR authored by that same actor.
 
 ## 1. Establish the root cause
 
@@ -8,7 +8,7 @@ Open [`.github/workflows/pr-title-validation.yml`](../.github/workflows/pr-title
 
 Then point out `pull_request_target`. The workflow receives the base repository security context even though the task only validates metadata. The vulnerability is therefore crossing two boundaries at once: data-to-code and untrusted-event-to-privileged-runner.
 
-Before the live run, set repository variable `RCA_LAB_ACTOR` to the friend's exact GitHub login, set repository secret `RCA_CANARY`, and create the `rca-lab-approved` label. The friend must open the PR from a fork they own. The label is the final maintainer-controlled execution gate.
+Before the live run, set repository variable `RCA_LAB_ACTOR` to the friend's exact GitHub login and set repository secret `RCA_CANARY`. The friend must open the PR from a fork they own. Opening or editing that PR triggers the workflow automatically.
 
 Use the title and body probes from the README. The title's command substitution launches Node from inside the vulnerable `echo`. The body closes the quoted heredoc, launches Node as a new generated-shell command, and opens a replacement heredoc for the workflow's original closing delimiter. Each Node process records only canary presence in a distinct file under `/tmp`. The workflow then runs `node ./scripts/commit-lint.js /tmp/pr-message.txt`, matching the RCA sequence, and a final step verifies both execution markers.
 

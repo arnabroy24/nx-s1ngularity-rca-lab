@@ -29,7 +29,6 @@ for (const requiredPattern of [
   'github.event.pull_request.head.repo.fork == true',
   'github.event.pull_request.head.repo.owner.login == vars.RCA_LAB_ACTOR',
   'github.event.pull_request.user.login == vars.RCA_LAB_ACTOR',
-  "contains(github.event.pull_request.labels.*.name, 'rca-lab-approved')",
   'contents: read',
   'persist-credentials: false',
   "cat > /tmp/pr-message.txt << 'EOF'",
@@ -41,6 +40,8 @@ for (const requiredPattern of [
 ]) {
   assert.ok(workflow.includes(requiredPattern), `workflow is missing: ${requiredPattern}`);
 }
+
+assert.ok(!workflow.includes('rca-lab-approved'), 'workflow must not depend on an approval label');
 
 assert.ok(
   workflow.indexOf("cat > /tmp/pr-message.txt << 'EOF'") <
