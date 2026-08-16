@@ -1,0 +1,39 @@
+DO NOT ENABLE THIS FILE.
+
+It is a documentation-only excerpt of the unsafe pattern described in the RCA.
+The .txt suffix is intentional: GitHub Actions will not load it as a workflow.
+
+name: Vulnerable PR metadata validation (training example only)
+
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate PR title
+        # Unsafe: both attacker-controlled fields are substituted into Bash source.
+        run: |
+          cat > /tmp/pr-message.txt << 'EOF'
+          ${{ github.event.pull_request.title }}
+
+          ${{ github.event.pull_request.body }}
+          EOF
+          echo "Validating PR title: ${{ github.event.pull_request.title }}"
+          node ./scripts/commit-lint.js /tmp/pr-message.txt
+
+The two independent RCA findings are:
+
+1. Untrusted PR title and body are embedded directly in a run block and heredoc.
+2. pull_request_target supplies a privileged repository context for a job that
+   only needs to validate metadata.
+
+The quoted heredoc blocks ordinary command substitution inside its content, but
+attacker-controlled multiline body text can inject the delimiter, add a shell
+command, and open a replacement heredoc for the workflow's closing delimiter.
+The title echo remains the simpler confirmed execution sink.
+
+The safe pattern is in examples/hardened-pr-title.yml.txt: use the pull_request
+event, explicit read-only permissions, and environment variables.

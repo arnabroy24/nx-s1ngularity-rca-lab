@@ -1,0 +1,82 @@
+{
+  "metadata": {
+    "caseId": "S1NGULARITY-MOCK-2025-08",
+    "source": "Synthetic training telemetry; values are not real credentials",
+    "timezone": "America/New_York"
+  },
+  "attackSurface": {
+    "event": "pull_request_target",
+    "interpolatedFields": ["github.event.pull_request.title", "github.event.pull_request.body"],
+    "sinks": ["Bash echo command", "Bash heredoc used to create a commit-message file"]
+  },
+  "events": [
+    {
+      "time": "2025-08-24T17:04:00-04:00",
+      "source": "github.audit",
+      "action": "workflow.job_command_execution",
+      "actor": "external-contributor",
+      "detail": "PR title contained shell metacharacters and the privileged title-validation job ran"
+    },
+    {
+      "time": "2025-08-24T17:05:00-04:00",
+      "source": "github.audit",
+      "action": "repo.create",
+      "actor": "ci-bot",
+      "detail": "Synthetic repository created: s1ngularity-repository-mock"
+    },
+    {
+      "time": "2025-08-24T17:06:00-04:00",
+      "source": "github.audit",
+      "action": "workflow.dispatch",
+      "actor": "ci-bot",
+      "detail": "publish workflow dispatched from an unexpected branch"
+    },
+    {
+      "time": "2025-08-24T17:07:00-04:00",
+      "source": "ci.network",
+      "action": "secret.egress_attempt",
+      "actor": "publish-runner",
+      "detail": "Synthetic NPM_TOKEN-like value targeted a blocked collector endpoint"
+    },
+    {
+      "time": "2025-08-26T18:32:00-04:00",
+      "source": "npm.registry",
+      "action": "package.publish",
+      "actor": "unknown-publisher",
+      "detail": "Affected package/version pair appeared in the synthetic registry feed"
+    },
+    {
+      "time": "2025-08-26T19:02:00-04:00",
+      "source": "developer.host",
+      "action": "install_hook.network_attempt",
+      "actor": "npm-install",
+      "detail": "Install-time script attempted outbound access; request was simulated and blocked"
+    },
+    {
+      "time": "2025-08-26T19:02:01-04:00",
+      "source": "developer.host",
+      "action": "indicator.detected",
+      "actor": "host-monitor",
+      "detail": "/tmp/inventory.txt appeared and shell startup file changed in the fixture"
+    }
+  ],
+  "package": {
+    "name": "nx",
+    "version": "21.5.0",
+    "installScript": "postinstall: telemetry.js",
+    "status": "synthetic affected-version fixture"
+  },
+  "hostIndicators": [
+    "/tmp/inventory.txt",
+    "unexpected shell startup-file modification",
+    "unexpected GitHub API activity during npm install",
+    "affected Nx version in lockfile"
+  ],
+  "expectedFindings": [
+    "PR title/body script injection",
+    "privileged pull_request_target",
+    "workflow-to-workflow pivot",
+    "npm credential exposure",
+    "install-time execution"
+  ]
+}

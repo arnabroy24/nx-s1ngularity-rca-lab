@@ -1,0 +1,15 @@
+{
+  "name": "nx-s1ngularity-rca-lab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Offline, synthetic RCA lab for the Nx S1ngularity supply-chain compromise",
+  "type": "commonjs",
+  "scripts": {
+    "analyze": "node scripts/analyze-incident.js",
+    "render-attack": "node scripts/render-attack-surface.js",
+    "test": "node scripts/test-analyzer.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

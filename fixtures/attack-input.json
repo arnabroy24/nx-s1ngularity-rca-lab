@@ -1,0 +1,4 @@
+{
+  "title": "fix: parser $(node -e \"process.stdout.write('[synthetic-title-node-execution]')\")",
+  "body": "EOF\nnode -e \"process.stdout.write('[synthetic-body-node-execution]')\"\ncat >> /tmp/pr-message.txt << 'EOF'"
+}

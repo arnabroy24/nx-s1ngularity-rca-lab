@@ -1,0 +1,24 @@
+name: Hardened pull-request metadata validation
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate title and body as data
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          printf 'Validating PR title: %s\n' "$PR_TITLE"
+          printf '%s\n\n%s\n' "$PR_TITLE" "$PR_BODY" > /tmp/pr-message.txt
+          case "$PR_TITLE" in
+            feat:*|fix:*|docs:*|chore:*) exit 0 ;;
+            *) printf 'Title must use a supported Conventional Commit prefix.\n' >&2; exit 1 ;;
+          esac

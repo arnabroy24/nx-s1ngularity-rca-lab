@@ -1,0 +1,67 @@
+name: RCA lab - vulnerable PR metadata validation
+
+# INTENTIONALLY VULNERABLE TRAINING WORKFLOW.
+# It reproduces the Nx S1ngularity root cause: pull_request_target plus direct
+# interpolation of attacker-controlled PR metadata into generated Bash source.
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize, reopened, labeled]
+
+# The real incident inherited write access. This lab grants only the read access
+# needed to check out the base revision; checkout does not persist credentials.
+permissions:
+  contents: read
+
+concurrency:
+  group: rca-lab-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  vulnerable-validation:
+    # Containment gates:
+    # 1. only a PR from a branch in this repository;
+    # 2. only the login configured in the RCA_LAB_ACTOR repository variable;
+    # 3. only after a maintainer adds the rca-lab-approved label.
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.user.login == vars.RCA_LAB_ACTOR &&
+      contains(github.event.pull_request.labels.*.name, 'rca-lab-approved')
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    env:
+      RCA_CANARY: ${{ secrets.RCA_CANARY }}
+
+    steps:
+      - name: Check out trusted base revision
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Intentionally vulnerable title and body handling
+        shell: bash
+        run: |
+          cat > /tmp/pr-message.txt << 'EOF'
+          ${{ github.event.pull_request.title }}
+
+          ${{ github.event.pull_request.body }}
+          EOF
+
+          echo "Validating PR title: ${{ github.event.pull_request.title }}"
+          node ./scripts/commit-lint.js /tmp/pr-message.txt
+
+      - name: Verify title and body command execution
+        if: always()
+        run: |
+          for marker in /tmp/title-executed /tmp/body-executed; do
+            if [[ -f "$marker" ]]; then
+              printf 'EXECUTION CONFIRMED: %s -> ' "$marker"
+              cat "$marker"
+              printf '\n'
+            else
+              printf 'EXECUTION NOT OBSERVED: %s\n' "$marker"
+            fi
+          done
+
+          printf '%s\n' 'The marker contents report only canary presence, never its value.'

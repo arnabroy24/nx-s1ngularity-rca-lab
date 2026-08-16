@@ -1,0 +1,3 @@
+fix: demonstrate the Node title validator
+
+Synthetic PR body used by the local test.

@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Nx S1ngularity attack chain</title>
+  <desc id="desc">An attacker-controlled pull request title reaches a privileged GitHub Actions workflow, steals a GitHub token, pivots through the publish workflow to steal the npm token, publishes malicious Nx packages, and exfiltrates developer secrets during npm installation.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#93c5fd"/>
+    </marker>
+    <style>
+      .title { font: 700 34px Segoe UI, Arial, sans-serif; fill: #f8fafc; }
+      .subtitle { font: 400 18px Segoe UI, Arial, sans-serif; fill: #cbd5e1; }
+      .stage { font: 700 15px Segoe UI, Arial, sans-serif; letter-spacing: 1.8px; fill: #93c5fd; }
+      .box-title { font: 700 22px Segoe UI, Arial, sans-serif; fill: #f8fafc; }
+      .body { font: 400 17px Segoe UI, Arial, sans-serif; fill: #dbeafe; }
+      .small { font: 400 15px Segoe UI, Arial, sans-serif; fill: #cbd5e1; }
+      .arrow-label { font: 600 15px Segoe UI, Arial, sans-serif; fill: #bfdbfe; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <text x="80" y="72" class="title">Nx S1ngularity — attack chain</text>
+  <text x="80" y="108" class="subtitle">One untrusted pull-request field crossed four trust boundaries: CI → repository → npm publishing → developer workstations.</text>
+
+  <line x1="80" y1="150" x2="1520" y2="150" stroke="#334155" stroke-width="2"/>
+
+  <!-- Stage labels -->
+  <text x="100" y="190" class="stage">1 · INITIAL ACCESS</text>
+  <text x="590" y="190" class="stage">2 · PRIVILEGE ESCALATION</text>
+  <text x="1080" y="190" class="stage">3 · SUPPLY-CHAIN IMPACT</text>
+
+  <!-- Boxes -->
+  <g filter="url(#shadow)">
+    <rect x="80" y="230" width="390" height="190" rx="16" fill="#3b1d2a" stroke="#fb7185" stroke-width="2"/>
+    <rect x="590" y="230" width="390" height="190" rx="16" fill="#172554" stroke="#60a5fa" stroke-width="2"/>
+    <rect x="1090" y="230" width="390" height="190" rx="16" fill="#1f2937" stroke="#f59e0b" stroke-width="2"/>
+
+    <rect x="80" y="570" width="390" height="190" rx="16" fill="#1e293b" stroke="#a78bfa" stroke-width="2"/>
+    <rect x="590" y="570" width="390" height="190" rx="16" fill="#3b1d2a" stroke="#fb7185" stroke-width="2"/>
+    <rect x="1090" y="570" width="390" height="190" rx="16" fill="#3f2b12" stroke="#fbbf24" stroke-width="2"/>
+  </g>
+
+  <!-- Box content -->
+  <text x="110" y="272" class="box-title">Attacker opens a PR</text>
+  <text x="110" y="310" class="body">Malicious title is supplied as</text>
+  <text x="110" y="337" class="body">untrusted event data.</text>
+  <text x="110" y="376" class="small">Example sink: echo "... ${{ title }}"</text>
+
+  <text x="620" y="272" class="box-title">Privileged workflow runs</text>
+  <text x="620" y="310" class="body">pull_request_target executes</text>
+  <text x="620" y="337" class="body">in the target repository context.</text>
+  <text x="620" y="376" class="small">Shell injection → arbitrary commands</text>
+
+  <text x="1120" y="272" class="box-title">GITHUB_TOKEN exposed</text>
+  <text x="1120" y="310" class="body">Write-capable token creates a</text>
+  <text x="1120" y="337" class="body">branch/commit and invokes publish.yml.</text>
+  <text x="1120" y="376" class="small">workflow_dispatch is the pivot</text>
+
+  <text x="110" y="612" class="box-title">Publish workflow executes</text>
+  <text x="110" y="650" class="body">Malicious commit replaces a</text>
+  <text x="110" y="677" class="body">legitimate script for the run.</text>
+  <text x="110" y="716" class="small">Publish job can read NPM_TOKEN</text>
+
+  <text x="620" y="612" class="box-title">NPM_TOKEN stolen</text>
+  <text x="620" y="650" class="body">Modified publish logic sends the</text>
+  <text x="620" y="677" class="body">token to attacker infrastructure.</text>
+  <text x="620" y="716" class="small">The publish pipeline was abused to extract the token</text>
+
+  <text x="1120" y="612" class="box-title">Malicious Nx versions</text>
+  <text x="1120" y="650" class="body">Stolen npm credentials publish</text>
+  <text x="1120" y="677" class="body">packages with a postinstall hook.</text>
+  <text x="1120" y="716" class="small">Active for about four hours</text>
+
+  <!-- Bottom outcome -->
+  <g filter="url(#shadow)">
+    <rect x="340" y="850" width="920" height="90" rx="16" fill="#111827" stroke="#f87171" stroke-width="2"/>
+  </g>
+  <text x="380" y="887" class="box-title">npm install → telemetry.js → collection, exfiltration, sabotage</text>
+  <text x="380" y="916" class="body">GitHub/npm credentials · .env and SSH keys · wallet paths · AI-CLI filesystem search · public results.b64 repos · shell shutdown line</text>
+
+  <!-- Arrows -->
+  <line x1="470" y1="325" x2="580" y2="325" stroke="#93c5fd" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="492" y="307" class="arrow-label">title injection</text>
+  <line x1="980" y1="325" x2="1080" y2="325" stroke="#93c5fd" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="995" y="307" class="arrow-label">API calls</text>
+  <path d="M1285 430 C1285 505, 1285 515, 1285 560" fill="none" stroke="#93c5fd" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="1305" y="505" class="arrow-label">npm release</text>
+  <line x1="1090" y1="665" x2="990" y2="665" stroke="#93c5fd" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="1002" y="646" class="arrow-label">secret exfiltration</text>
+  <line x1="590" y1="665" x2="480" y2="665" stroke="#93c5fd" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="492" y="646" class="arrow-label">publish run</text>
+  <path d="M275 770 C275 818, 460 835, 520 845" fill="none" stroke="#93c5fd" stroke-width="4" marker-end="url(#arrow)"/>
+  <path d="M785 770 L785 840" fill="none" stroke="#93c5fd" stroke-width="4" marker-end="url(#arrow)"/>
+  <path d="M1285 770 C1285 818, 1135 835, 1080 845" fill="none" stroke="#93c5fd" stroke-width="4" marker-end="url(#arrow)"/>
+
+  <text x="80" y="982" class="small">Evidence and dates: Nx GHSA-cxm3-wv7p-598c · Nx postmortem · Wiz Research · GitHub Actions security guidance</text>
+</svg>
